@@ -4,7 +4,7 @@
   "description": "Twitch bot that can control some Mi Home devices",
   "main": "src/bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/bot.js"
   },
   "repository": {
     "type": "git",
