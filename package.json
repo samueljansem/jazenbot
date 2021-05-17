@@ -1,0 +1,26 @@
+{
+  "name": "jazenbot",
+  "version": "1.0.0",
+  "description": "Twitch bot that can control some Mi Home devices",
+  "main": "src/bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samueljansem/jazenbot.git"
+  },
+  "keywords": [],
+  "author": "Samuel Jansem",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/samueljansem/jazenbot/issues"
+  },
+  "homepage": "https://github.com/samueljansem/jazenbot#readme",
+  "dependencies": {
+    "dotenv": "^9.0.2",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6",
+    "tmi.js": "^1.8.3"
+  }
+}
