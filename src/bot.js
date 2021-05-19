@@ -1,7 +1,7 @@
 const tmi = require('tmi.js');
 const config = require('./tmi-client-config');
 const client = new tmi.client(config.tmi);
-const commands = require('./chat-commands');
+const commandHandler = require('./chat-commands');
 const rewards = require('./chat-rewards');
 
 init();
@@ -15,12 +15,12 @@ function init() {
     client.connect();
 }
 
-function onMessageHandler(channel, userstate, msg, self) {
+async function onMessageHandler(channel, userstate, msg, self) {
     if (self || userstate.username === 'streamelements') return;
 
     let response = undefined;
 
-    if (isChatCommand(msg)) response = commands(userstate, msg);
+    if (isChatCommand(msg)) response = await commandHandler.exec(userstate, msg);
 
     if (!!response) client.say(channel, response);
 }

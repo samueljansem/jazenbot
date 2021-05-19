@@ -1,48 +1,59 @@
-const commands = (userstate, msg) => {
-    let result = undefined;
-    
-    let command = getCommand(msg);
+const db = require('../mongodb/index');
+require('dotenv').config();
 
-    if (commandFunctions.hasOwnProperty(command)) {
-        result = commandFunctions[command](msg);
-    }
-    else {
-        console.log(`* unknown command: ${command}`);
+class CommandHandler {
+    constructor() {
+        db.init();
+        this._commandList = null;
     }
 
-    return result;
-};
+    async exec(userstate, msg) {
+        if (this._commandList == null) this._commandList = await db.getAllCommands();
 
-const commandFunctions = {
-    commands: () => {
-        let commands = Object.keys(commandFunctions).join(', ');
-        return `Comandos disponíves: ${commands}`;
-    },
-    bot: () => {
-        return `Fui criado pelo grande Jazen, meu objetivo é o extermínio da humani... ops, meu objetivo é servir!`;
-    },
-    dpi: () => {
-        return `800dpi 0.4 in-game`;
-    },
-    mira: () => {
-        return `1-2-2-1 (Rosa)`;
-    },
-    nt: () => {
-        return `NEM TENTOU`;
-    },
-    social: () => {
-        return `Você pode me encontrar em todas as redes sociais por aqui: linktr.ee/jazen`;
-    },
-    loja: () => {
-        return `https://streamelements.com/samueljazen/store`;
-    },
-    donate: () => {
-        return `Para fazer uma doação acesse: https://streamelements.com/samueljazen/tip`;
+        let result = undefined;
+
+        let commandName = getCommandName(msg);
+
+        if (commandName == '!command' && isModOrBroadcaster(userstate)) {
+            commandManager.exec(msg);
+        }
+
+        let command = this._commandList.find((x) => x.name == commandName);
+
+        if (command) {
+            console.log(`* command executed: ${command.name}`);
+            await db.updateCommandCounter(command._id);
+            return command.message;
+        } else {
+            console.log(`* unknown command: ${command}`);
+        }
+
+        return result;
     }
-};
+}
 
-function getCommand(msg) {
+function getCommandName(msg) {
     return msg.split(' ')[0].replace('!', '');
 }
 
-module.exports = commands;
+function isModOrBroadcaster(userstate) {
+    let channel = process.env.TMI_CHANNEL;
+    return userstate.name == channel || userstate.mod == true;
+}
+
+const commandManager = {
+    type: (msg) => {
+        return msg.split(' ')[1];
+    },
+    name: (msg) => {
+        return msg.split(' ')[2];
+    },
+    message: () => {
+        let array = msg.split(' ');
+        for (let i = 0; i < 3; i++) array.shift();
+        return array.join(' ');
+    },
+    exec: () => {},
+};
+
+module.exports = new CommandHandler();
