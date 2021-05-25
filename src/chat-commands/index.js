@@ -1,12 +1,14 @@
+const miled = require('../mi-led');
+const colors = require('../mi-led/colors');
+
 const commands = (userstate, msg) => {
     let result = undefined;
-    
+
     let command = getCommand(msg);
 
     if (commandFunctions.hasOwnProperty(command)) {
         result = commandFunctions[command](msg);
-    }
-    else {
+    } else {
         console.log(`* unknown command: ${command}`);
     }
 
@@ -38,7 +40,15 @@ const commandFunctions = {
     },
     donate: () => {
         return `Para fazer uma doação acesse: https://streamelements.com/samueljazen/tip`;
-    }
+    },
+    luz: async (msg) => {
+        let color = msg.split(' ')[1];
+        return await miled.setColor(color);
+    },
+    cores: () => {
+        let cores = Object.keys(colors).join(', ');
+        return cores;
+    },
 };
 
 function getCommand(msg) {

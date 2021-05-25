@@ -15,12 +15,12 @@ function init() {
     client.connect();
 }
 
-function onMessageHandler(channel, userstate, msg, self) {
+async function onMessageHandler(channel, userstate, msg, self) {
     if (self || userstate.username === 'streamelements') return;
 
     let response = undefined;
 
-    if (isChatCommand(msg)) response = commands(userstate, msg);
+    if (isChatCommand(msg)) response = await commands(userstate, msg);
 
     if (!!response) client.say(channel, response);
 }
