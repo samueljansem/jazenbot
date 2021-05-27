@@ -1,7 +1,7 @@
 const tmi = require('tmi.js');
 const config = require('./tmi-client-config');
 const client = new tmi.client(config.tmi);
-const commands = require('./chat-commands');
+const commandHandler = require('./chat-commands');
 const rewards = require('./chat-rewards');
 const twitchLive = require('./events/twitch-live');
 
@@ -22,7 +22,7 @@ async function onMessageHandler(channel, userstate, msg, self) {
 
     let response = undefined;
 
-    if (isChatCommand(msg)) response = await commands(userstate, msg);
+    if (isChatCommand(msg)) response = await commandHandler.exec(userstate, msg);
 
     if (!!response) client.say(channel, response);
 }

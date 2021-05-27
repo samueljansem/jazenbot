@@ -1,86 +1,83 @@
 const rp = require('request-promise');
+require('dotenv').config();
 
-const channel = 'samueljazen';
+const CHANNEL = process.env.TMI_CHANNEL;
 
 const rewards = (username, rewardType, tags, client) => {
     let result = undefined;
-    
+
     if (rewardFunction.hasOwnProperty(rewardType)) {
         result = rewardFunction[rewardType](username, rewardType, tags, client);
-    }
-    else {
+    } else {
         console.log(`* unknown redeem: ${rewardType}`);
     }
 
     return result;
 };
 
-
 const rewardFunction = {
-    'f5bdba69-9ed7-402d-ba2b-031be28ff99b': (username, rewardType, tags, client) => { //ravezinha
+    //ravezinha
+    'f5bdba69-9ed7-402d-ba2b-031be28ff99b': (username, rewardType, tags, client) => {
         return `${username} ativou o modo Rave!`;
     },
-    '4bc27f28-702e-4547-86fd-4f85e9f0d75e': (username, rewardType, tags, client) => { //tirocerto
 
+    //tirocerto
+    '4bc27f28-702e-4547-86fd-4f85e9f0d75e': (username, rewardType, tags, client) => {},
+
+    //roleta
+    '36dab8f0-700d-48f5-9508-eb02165d8a29': (username, rewardType, tags, client) => {
+        getRandomChatter(CHANNEL, { skipList: [username] }).then((user) => {
+            if (user === null) {
+                client.say(CHANNEL, `${username}, não há ninguém disponível`);
+            } else {
+                let { name } = user;
+                client.say(CHANNEL, `${name} foi de base na roleta! segura 5 minutin ai amigão`);
+                client.timeout(CHANNEL, name, 300, 'Foi pego na roleta amigão');
+            }
+        });
     },
-    '36dab8f0-700d-48f5-9508-eb02165d8a29': (username, rewardType, tags, client) => { //roleta
-        getRandomChatter(channel, { skipList: [username] })
-            .then(user => {
-                if (user === null) {
-                    client.say(channel, `${username}, não há ninguém disponível`);
-                }
-                else {
-                    let { name } = user;
-                    client.say(channel, `${name} foi de base na roleta! segura 5 minutin ai amigão`);
-                    client.timeout(channel, name, 300, 'Foi pego na roleta amigão');
-                }
-            })
-    }
 };
 
 function getChatters(channelName, _attemptCount = 0) {
     return rp({
         uri: `https://tmi.twitch.tv/group/user/${channelName}/chatters`,
-        json: true
+        json: true,
     })
-        .then(data => {
-            return Object.entries(data.chatters)
-                .reduce((p, [type, list]) => p.concat(list.map(name => {
-                    if (name === channelName) type = 'broadcaster';
-                    return { name, type };
-                })), []);
+        .then((data) => {
+            return Object.entries(data.chatters).reduce(
+                (p, [type, list]) =>
+                    p.concat(
+                        list.map((name) => {
+                            if (name === channelName) type = 'broadcaster';
+                            return { name, type };
+                        })
+                    ),
+                []
+            );
         })
-        .catch(err => {
+        .catch((err) => {
             if (_attemptCount < 3) {
                 return getChatters(channelName, _attemptCount + 1);
             }
             throw err;
-        })
+        });
 }
 
 function getRandomChatter(channelName, opts = {}) {
-    let {
-        onlyViewers = false,
-        noBroadcaster = true,
-        noModerators = true,
-        skipList = []
-    } = opts;
+    let { onlyViewers = false, noBroadcaster = true, noModerators = true, skipList = [] } = opts;
 
-    return getChatters(channelName)
-        .then(data => {
-            let chatters = data
-                .filter(({ name, type }) =>
-                    !(
-                        (onlyViewers && type !== 'viewers') ||
-                        (noBroadcaster && type === 'broadcaster') ||
-                        (noModerators && type === 'moderators') ||
-                        skipList.includes(name)
-                    )
-                );
-            return chatters.length === 0 ?
-                null :
-                chatters[Math.floor(Math.random() * chatters.length)];
-        });
+    return getChatters(channelName).then((data) => {
+        let chatters = data.filter(
+            ({ name, type }) =>
+                !(
+                    (onlyViewers && type !== 'viewers') ||
+                    (noBroadcaster && type === 'broadcaster') ||
+                    (noModerators && type === 'moderators') ||
+                    skipList.includes(name)
+                )
+        );
+        return chatters.length === 0 ? null : chatters[Math.floor(Math.random() * chatters.length)];
+    });
 }
 
 module.exports = rewards;
