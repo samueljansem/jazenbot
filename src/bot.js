@@ -3,6 +3,7 @@ const config = require('./tmi-client-config');
 const client = new tmi.client(config.tmi);
 const commands = require('./chat-commands');
 const rewards = require('./chat-rewards');
+const twitchLive = require('./events/twitch-live');
 
 init();
 
@@ -13,6 +14,7 @@ function init() {
     client.on('resub', onResubHandler);
     client.on('redeem', onRedeemHandler);
     client.connect();
+    twitchLive.init();
 }
 
 async function onMessageHandler(channel, userstate, msg, self) {

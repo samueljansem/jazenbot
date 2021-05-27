@@ -52,7 +52,7 @@ const commandFunctions = {
 };
 
 function getCommand(msg) {
-    return msg.split(' ')[0].replace('!', '');
+    return msg.split(' ')[0].replace('!', '').toLocaleLowerCase();
 }
 
 module.exports = commands;

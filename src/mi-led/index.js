@@ -2,16 +2,31 @@ const mihome = require('node-mihome-miled');
 const deviceInfo = require('./device-info');
 const user = require('./user');
 const colors = require('./colors');
+const events = require('events');
+const emitter = new events.EventEmitter();
 
 class MiLed {
     constructor() {
         this._device = null;
+        this._isLive = null;
+
+        emitter.on('is_live', (islive) => {
+            this._isLive = islive;
+
+            if (islive) this.init();
+            else this.logout();
+        });
+
         this.init();
     }
 
     async init() {
         await this.login();
         this._device = await this.getDevice();
+    }
+
+    async logout() {
+        await mihome.miCloudProtocol.logout();
     }
 
     async login() {
@@ -33,6 +48,8 @@ class MiLed {
     }
 
     async setColor(color) {
+        if (!this._isLive) return 'Só é possivel utilizar esse comando quando o pai ta on';
+
         if (colors.hasOwnProperty(color)) {
             let params = [colors[color], 'smooth', 500];
             this._device.setColor(params);
