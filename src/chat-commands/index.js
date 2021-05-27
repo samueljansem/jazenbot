@@ -1,12 +1,20 @@
 const miled = require('../mi-led');
 const colors = require('../mi-led/colors');
 const db = require('../mongodb/index');
+const em = require('../events/common');
 require('dotenv').config();
 
 class CommandHandler {
     constructor() {
         db.init();
         this._commandList = null;
+        this._islive = null;
+
+        em.on('islive', (islive) => {
+            this._islive = islive;
+
+            if (islive) miled.init();
+        });
     }
 
     async exec(userstate, msg) {
