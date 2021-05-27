@@ -7,6 +7,8 @@ Jazenbot is a twitch that was made to interact with viewers, automate some chann
 ## Features
 
 -   Add/List/Edit/Delete basic chat commands with simple response messages and counters
+-   Handle custom channel points rewards
+-   Control Xiaomi smart devices by twitch chat
 
 ## Tech
 
@@ -14,18 +16,7 @@ Jazenbot uses:
 
 -   [node.js] - evented I/O for the backend
 -   [tmi.js] - node.js module to connect to twitch chat and listen events
+-   [node-mihome] - node.js module to control some Xiaomi smart devices
 -   [mongodb] - as database to store commands and rewards data
 
-And of course Jazenbot itself is open source with a [public repository][dill] on GitHub.
-
-## Installation
-
-Jazenbot requires [Node.js](https://nodejs.org/) to run.
-
-Install the dependencies and devDependencies and start the server.
-
-```sh
-cd jazenbot
-npm i
-node src/bot.js
-```
+Jazenbot itself is open source with a [public repository][dill] on GitHub.
