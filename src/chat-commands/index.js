@@ -58,12 +58,31 @@ const commandManager = {
     name: (msg) => {
         return msg.split(' ')[2];
     },
-    message: () => {
+    message: (msg) => {
         let array = msg.split(' ');
         for (let i = 0; i < 3; i++) array.shift();
         return array.join(' ');
     },
-    exec: () => {},
+    exec: (msg) => {
+        let type = commandManager.type(msg);
+        let name = commandManager.name(msg);
+        let message = commandManager.message(msg);
+
+        if (commandManager.hasOwnProperty(type))
+            commandManager['type'](name, message);
+    },
+    create: async (name, message) => {
+        await db.addCommand(name, message);
+    },
+    update: async (name, message) => {
+        let command = await db.getCommand(name);
+        command.message = message;
+
+        await db.editCommand(command);
+    },
+    delete: async (name, message) => {
+        await db.removeCommand(name);
+    }
 };
 
 module.exports = new CommandHandler();
