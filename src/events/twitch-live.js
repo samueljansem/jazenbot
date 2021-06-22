@@ -40,7 +40,7 @@ class TwitchLive {
 
         let islive = !!channel['is_live'];
 
-        em.emit('islive', this._isLive);
+        em.emit('islive', islive);
     }
 }
 
