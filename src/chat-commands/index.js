@@ -28,7 +28,7 @@ class CommandHandler {
             commandManager.exec(msg);
         }
 
-        if (commandName == '!luz') {
+        if (commandName == 'luz') {
             let color = getCommandColor();
             let message = await miled.setColor(color);
             return message;
