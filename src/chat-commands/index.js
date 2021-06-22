@@ -28,6 +28,12 @@ class CommandHandler {
             commandManager.exec(msg);
         }
 
+        if (commandName == '!luz') {
+            let color = getCommandColor();
+            let message = await miled.setColor(color);
+            return message;
+        }
+
         let command = this._commandList.find((x) => x.name == commandName);
 
         if (command) {
@@ -44,6 +50,10 @@ class CommandHandler {
 
 function getCommandName(msg) {
     return msg.split(' ')[0].replace('!', '');
+}
+
+function getCommandColor(msg) {
+    return msg.split(' ')[1];
 }
 
 function isModOrBroadcaster(userstate) {
@@ -63,7 +73,7 @@ const commandManager = {
         for (let i = 0; i < 3; i++) array.shift();
         return array.join(' ');
     },
-    exec: () => {},
+    exec: () => { },
 };
 
 module.exports = new CommandHandler();
