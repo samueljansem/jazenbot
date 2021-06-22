@@ -48,8 +48,6 @@ class MiLed {
     }
 
     async setColor(color) {
-        if (!this._isLive) return 'Só é possivel utilizar esse comando quando o pai ta on';
-
         if (colors.hasOwnProperty(color)) {
             let params = [colors[color], 'smooth', 500];
             this._device.setColor(params);

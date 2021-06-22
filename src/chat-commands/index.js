@@ -29,9 +29,12 @@ class CommandHandler {
         }
 
         if (commandName == 'luz') {
-            let color = getCommandColor(msg);
-            let message = await miled.setColor(color);
-            return message;
+            if (this._islive) {
+                let color = getCommandColor(msg);
+                let message = await miled.setColor(color);
+                return message;
+            }
+            return `Esse comando só pode ser utilizado quando o pai ta on!`;
         }
 
         let command = this._commandList.find((x) => x.name == commandName);
