@@ -12,12 +12,10 @@ class MiLed {
 
         emitter.on('is_live', (islive) => {
             this._isLive = islive;
-
             if (islive) this.init();
             else this.logout();
+            console.log(`* live state changed to ${islive}`);
         });
-
-        this.init();
     }
 
     async init() {
@@ -27,12 +25,14 @@ class MiLed {
 
     async logout() {
         await mihome.miCloudProtocol.logout();
+        console.log('* logout micloud')
     }
 
     async login() {
         mihome.miioProtocol.init();
         mihome.aqaraProtocol.init();
         await mihome.miCloudProtocol.login(user.name, user.password);
+        console.log('* trying to login on micloud');
     }
 
     async getDevice() {
@@ -53,6 +53,7 @@ class MiLed {
         if (colors.hasOwnProperty(color)) {
             let params = [colors[color], 'smooth', 500];
             this._device.setColor(params);
+            console.log(`* cor alterada para ${color}`);
             return `Cor alterada para ${color}`;
         } else {
             return `Cor indisponível, para saber quais cores você pode utilizar, use !cores`;
